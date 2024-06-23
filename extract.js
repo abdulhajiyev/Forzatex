@@ -21,10 +21,10 @@ async function getSwatchbins() {
 			const data = await readFile(modelbin, "utf8");
 			const materialRegex =
 				/Game:[\/\\]Media[\/\\]cars[\/\\]_library[\/\\]materials[\/\\].+?\.materialbin/g;
-
-			const match = materialRegex.exec(data);
-			while (match !== null) {
+			let match;
+			while ((match = materialRegex.exec(data)) !== null) {
 				const fullPath = match[0];
+
 				const materialPath = fullPath.replace("Game:\\Media\\cars\\", "");
 				uniqueMaterialPaths.add(materialPath);
 			}
@@ -37,9 +37,8 @@ async function getSwatchbins() {
 			const materialData = await readFile(materialFullPath, "utf8");
 			const swatchRegex =
 				/Game:[\/\\]Media[\/\\]cars[\/\\]_library[\/\\]textures[\/\\].+?\.swatchbin/g;
-
-			const match = swatchRegex.exec(materialData);
-			while (match !== null) {
+			let match;
+			while ((match = swatchRegex.exec(materialData)) !== null) {
 				const fullPath = match[0];
 				const swatchFile = fullPath.replace("Game:\\Media\\cars", parentDir);
 				uniqueSwatchPaths.add(swatchFile);
@@ -51,9 +50,8 @@ async function getSwatchbins() {
 			const modelbinData = await readFile(modelbin, "utf8");
 			const swatchRegex =
 				/Game:[\/\\]Media[\/\\]cars[\/\\]_library[\/\\]textures[\/\\].+?\.swatchbin/g;
-
-			const match = swatchRegex.exec(modelbinData);
-			while (match !== null) {
+			let match;
+			while ((match = swatchRegex.exec(modelbinData)) !== null) {
 				const fullPath = match[0];
 				const swatchFile = fullPath.replace("Game:\\Media\\cars", parentDir);
 				uniqueSwatchPaths.add(swatchFile);
@@ -90,6 +88,7 @@ async function getSwatchbins() {
 	}
 }
 
+
 async function searchMaterialbins() {
 	try {
 		const modelbins = await glob(modelbinPattern);
@@ -99,10 +98,11 @@ async function searchMaterialbins() {
 			const data = await readFile(modelbin, "utf8");
 			const regex =
 				/Game:[\/\\]Media[\/\\]cars[\/\\]_library[\/\\]materials[\/\\].+?\.materialbin/g;
+			let match;
 
-			const match = regex.exec(data);
-			while (match !== null) {
-				const relativePath = match[0].replace("Game:\\Media\\cars\\", "");
+			while ((match = regex.exec(data)) !== null) {
+				const relativePath = match[0].replace("Game:\\Media\\cars\\", ""); // Extract relative path
+
 				if (!pathMap.has(modelbin)) {
 					pathMap.set(modelbin, []);
 				}
@@ -130,6 +130,5 @@ async function searchMaterialbins() {
 		console.error("Error:", err);
 	}
 }
-
 await getSwatchbins();
 await searchMaterialbins();
